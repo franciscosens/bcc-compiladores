@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.APPROVE_OPTION;
@@ -143,8 +144,9 @@ public class MainJFrame extends javax.swing.JFrame {
         jPopupMenu.getAccessibleContext().setAccessibleParent(jTextAreaEditor);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Nosso Compilador");
+        setIconImage(new ImageIcon(MainJFrame.class.getResource("/resources/imagens/ladybug_16x16.png")).getImage());
         setMinimumSize(new java.awt.Dimension(900, 620));
-        setPreferredSize(new java.awt.Dimension(900, 620));
 
         jToolBar.setBorder(null);
         jToolBar.setRollover(true);

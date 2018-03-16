@@ -26,10 +26,9 @@ public class SplashScreenJFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Compilador");
+        setTitle("Nosso Compilador");
         setIconImage(new ImageIcon(SplashScreenJFrame.class.getResource("/resources/imagens/ladybug_16x16.png")).getImage());
         setMinimumSize(new java.awt.Dimension(900, 620));
-        setPreferredSize(new java.awt.Dimension(900, 620));
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
