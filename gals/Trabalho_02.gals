@@ -11,6 +11,10 @@ mai: [A-Z]
 min: [a-z]
 letra: {mai} | {min}
 dig: [0-9]
+barra: "/"
+asterisco: "*"
+barraAsterisco: "/*"
+asteriscoBarra: "*/"
 ope: ("+" | "-" | "*" | "/")
 #Tokens
 //Especificações
@@ -21,12 +25,6 @@ ctsInt: [1-9]{dig}*|0
 ctsReal: 0,{dig}+|[1-9]{dig}*,{dig}+
 
 ctsCaractere: \"([^\n"\"\"]|\\\"|\\\\)*\"
-
-//comLinha:
-
-
-//comBloco:
-
 
 
 //Palavras reservadas
@@ -95,3 +93,6 @@ whileTrue = id : "whileTrue"
 //ignorar caracteres de formatação
 :[\t\n\s]
 
+:! {barra}{barra}[^\n]*
+
+:! {barraAsterisco}[^"*"/]*{asteriscoBarra}
