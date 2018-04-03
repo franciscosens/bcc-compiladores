@@ -1,0 +1,29 @@
+#Options
+GenerateScanner = true
+GenerateParser = false
+Language = Java
+ScannerName = Lexico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = String
+#RegularDefinitions
+D: [0-9]
+#Tokens
+cte_int: {D}+
+
+id: [A-Za-z]+
+
+//palavra reservada
+endIf = id : "endIf"  //vai seguir o padrão do "id", se não for especificamente endIf, vai ser um "id"
+
+//Simbolos especiais
+mais : "+"   //não colocar nomes
+"-"
+"*"
+"/"
+
+//comentários
+//Tutorial do GALS
+
+//ignorar caracteres de formatação
+:[\t\n\s]
