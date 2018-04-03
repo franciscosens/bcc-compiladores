@@ -24,3 +24,5 @@ hs_err_pid*
 /br.com.gueto.compilador/build/
 /build/
 nbproject/*
+build.xml
+manifest.mf
