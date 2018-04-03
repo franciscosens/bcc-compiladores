@@ -23,3 +23,4 @@ hs_err_pid*
 /br.com.gueto.compilador/nbproject/private/
 /br.com.gueto.compilador/build/
 /build/
+nbproject/*
