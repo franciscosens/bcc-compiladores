@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -44,7 +43,7 @@ public class MainJFrame extends javax.swing.JFrame {
             initComponents();
             jMenuBar.setBackground(Color.decode("#2B2B2B"));
             jToolBar.setBackground(Color.decode("#2B2B2B"));
-            getContentPane().setBackground(Color.decode("#2B2B2B"));
+            super.getContentPane().setBackground(Color.decode("#2B2B2B"));
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,7 +53,6 @@ public class MainJFrame extends javax.swing.JFrame {
         transferHandler = jTextAreaEditor.getTransferHandler();
         caminhoArquivo = "";
         fileNameExtensionFilter = new FileNameExtensionFilter("Documento de Texto (*.txt)", "txt");
-        System.out.println(Arrays.toString(fileNameExtensionFilter.getExtensions()));
     }
 
     @SuppressWarnings("unchecked")
@@ -130,7 +128,6 @@ public class MainJFrame extends javax.swing.JFrame {
         jPopupMenu.add(jMenuItemPasteJPopupMenu);
         jPopupMenu.add(jSeparator3);
 
-        jMenuItemCompileJPopupMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F9, 0));
         jMenuItemCompileJPopupMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/imagens/compile_16x16.png"))); // NOI18N
         jMenuItemCompileJPopupMenu.setText("Compile");
         jMenuItemCompileJPopupMenu.addActionListener(new java.awt.event.ActionListener() {
