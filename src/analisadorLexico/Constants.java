@@ -1,3 +1,5 @@
+package analisadorLexico;
+
 public interface Constants extends ScannerConstants
 {
     int EPSILON  = 0;

@@ -1,149 +1,154 @@
-public class Lexico implements Constants
-{
+package analisadorLexico;
+
+public class Lexico implements Constants {
+
     private int position;
     private String input;
+    private int start;
 
-    public Lexico()
-    {
-        this(new java.io.StringReader(""));
+    public Lexico() {
+        this("");
     }
 
-    public Lexico(java.io.Reader input)
-    {
+    public Lexico(String input) {
         setInput(input);
     }
 
-    public void setInput(java.io.Reader input)
-    {
-        StringBuffer bfr = new StringBuffer();
-        try
-        {
-            int c = input.read();
-            while (c != -1)
-            {
-                bfr.append((char)c);
-                c = input.read();
-            }
-            this.input = bfr.toString();
-        }
-        catch (java.io.IOException e)
-        {
-            e.printStackTrace();
-        }
-
+    public void setInput(String input) {
+        this.input = input;
         setPosition(0);
     }
 
-    public void setPosition(int pos)
-    {
+    public void setPosition(int pos) {
         position = pos;
     }
 
-    public Token nextToken() throws LexicalError
-    {
-        if ( ! hasInput() )
+    public Token nextToken() throws LexicalError {
+        if (!hasInput()) {
             return null;
+        }
 
-        int start = position;
+        start = position;
 
         int state = 0;
         int lastState = 0;
         int endState = -1;
         int end = -1;
 
-        while (hasInput())
-        {
+        while (hasInput()) {
             lastState = state;
             state = nextState(nextChar(), state);
 
-            if (state < 0)
+            if (state < 0) {
                 break;
-
-            else
-            {
-                if (tokenForState(state) >= 0)
-                {
+            } else {
+                if (tokenForState(state) >= 0) {
                     endState = state;
                     end = position;
                 }
             }
         }
-        if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
-            throw new LexicalError(SCANNER_ERROR[lastState], start);
+
+        if (endState < 0 || (endState != state && tokenForState(lastState) == -2)) {
+            /* TODO aqui foi alterado para poder resgatar o número da linha e o caractere com erro */
+            if ((lastState == 19) || (lastState == 4) || (lastState == 0)) {
+                throw new LexicalError(retornarTextoErroLinha(start) + input.substring(start, position) + " " + SCANNER_ERROR[lastState], start);
+            }
+            throw new LexicalError(retornarTextoErroLinha(start) + SCANNER_ERROR[lastState], start);
+        }
 
         position = end;
 
         int token = tokenForState(endState);
 
-        if (token == 0)
+        if (token == 0) {
             return nextToken();
-        else
-        {
+        } else {
             String lexeme = input.substring(start, end);
             token = lookupToken(token, lexeme);
             return new Token(token, lexeme, start);
         }
     }
 
-    private int nextState(char c, int state)
-    {
+    private int nextState(char c, int state) {
         int start = SCANNER_TABLE_INDEXES[state];
-        int end   = SCANNER_TABLE_INDEXES[state+1]-1;
+        int end = SCANNER_TABLE_INDEXES[state + 1] - 1;
 
-        while (start <= end)
-        {
-            int half = (start+end)/2;
+        while (start <= end) {
+            int half = (start + end) / 2;
 
-            if (SCANNER_TABLE[half][0] == c)
+            if (SCANNER_TABLE[half][0] == c) {
                 return SCANNER_TABLE[half][1];
-            else if (SCANNER_TABLE[half][0] < c)
-                start = half+1;
-            else  //(SCANNER_TABLE[half][0] > c)
-                end = half-1;
+            } else if (SCANNER_TABLE[half][0] < c) {
+                start = half + 1;
+            } else //(SCANNER_TABLE[half][0] > c)
+            {
+                end = half - 1;
+            }
         }
 
         return -1;
     }
 
-    private int tokenForState(int state)
-    {
-        if (state < 0 || state >= TOKEN_STATE.length)
+    private int tokenForState(int state) {
+        if (state < 0 || state >= TOKEN_STATE.length) {
             return -1;
+        }
 
         return TOKEN_STATE[state];
     }
 
-    public int lookupToken(int base, String key)
-    {
+    public int lookupToken(int base, String key) {
         int start = SPECIAL_CASES_INDEXES[base];
-        int end   = SPECIAL_CASES_INDEXES[base+1]-1;
+        int end = SPECIAL_CASES_INDEXES[base + 1] - 1;
 
-        while (start <= end)
-        {
-            int half = (start+end)/2;
+        while (start <= end) {
+            int half = (start + end) / 2;
             int comp = SPECIAL_CASES_KEYS[half].compareTo(key);
 
-            if (comp == 0)
+            if (comp == 0) {
                 return SPECIAL_CASES_VALUES[half];
-            else if (comp < 0)
-                start = half+1;
-            else  //(comp > 0)
-                end = half-1;
+            } else if (comp < 0) {
+                start = half + 1;
+            } else //(comp > 0)
+            {
+                end = half - 1;
+            }
         }
 
         return base;
     }
 
-    private boolean hasInput()
-    {
+    private boolean hasInput() {
         return position < input.length();
     }
 
-    private char nextChar()
-    {
-        if (hasInput())
+    private char nextChar() {
+        if (hasInput()) {
             return input.charAt(position++);
-        else
+        } else {
             return (char) -1;
+        }
+    }
+
+    private String retornarTextoErroLinha(int start) {
+        return "Erro na linha " + retornarLinha(start) + " - ";
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public int retornarLinha(int inicio) {
+        String[] linhas = input.split("\n");
+        int auxiliar = 0;
+        for (int i = 0; i < linhas.length; auxiliar++, i++) {
+            String linha = linhas[i];
+            auxiliar += linha.length();
+            if (inicio <= auxiliar) {
+                return i + 1;
+            }
+        }
+        return -1;
     }
 }

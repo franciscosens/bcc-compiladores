@@ -1,3 +1,5 @@
+package analisadorLexico;
+
 public interface ScannerConstants
 {
     int[] SCANNER_TABLE_INDEXES = 
@@ -901,33 +903,33 @@ public interface ScannerConstants
     int[] SPECIAL_CASES_VALUES =
         {  6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
 
-    String[] SCANNER_ERROR =
+   String[] SCANNER_ERROR =
     {
-        "Caractere n�o esperado",
+        "símbolo inválido",
+        "",
+        "",
+        "constante caracter inválida ou não finalizada",
+        "símbolo inválido",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "símbolo inválido",
         "",
         "",
         "Erro identificando ctsCaractere",
-        "Erro identificando \"&&\"",
         "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "Erro identificando \"||\"",
-        "",
-        "",
-        "Erro identificando ctsCaractere",
-        "",
-        "Erro identificando <ignorar>",
+        "comentário de bloco inválido ou não finalizado",
         "",
         "Erro identificando ctsReal",
         "Erro identificando ctsReal",
@@ -936,7 +938,7 @@ public interface ScannerConstants
         "",
         "",
         "",
-        "Erro identificando <ignorar>",
+        "comentário de linha inválido",
         "",
         "",
         ""

@@ -85,7 +85,7 @@ public class SplashScreenJFrame extends javax.swing.JFrame {
 
         });
         try {
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(1);
             sp.dispose();
             new MainJFrame().setVisible(true);
         } catch (InterruptedException ex) {
