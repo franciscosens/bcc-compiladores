@@ -1,0 +1,194 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = String
+Parser = LL
+#RegularDefinitions
+mai: [A-Z]
+min: [a-z]
+letra: {mai} | {min}
+dig: [0-9]
+barra: "/"
+asterisco: "*"
+barraAsterisco: "/*"
+asteriscoBarra: "*/"
+ope: ("+" | "-" | "*" | "/")
+#Tokens
+//Especificações
+id: {letra}({letra}|{dig}|_{letra}|_{dig})*_?
+
+ctsInt: [1-9]{dig}*|0
+
+ctsReal: 0,{dig}+|[1-9]{dig}*,{dig}+
+
+ctsCaractere: \"([^\n"\"\"]|\\\"|\\\\)*\"
+
+
+//Palavras reservadas
+bool = id : "bool"
+
+consts = id : "consts"
+
+def = id : "def"
+
+end = id : "end"
+
+execute = id : "execute"
+
+false = id : "false"
+
+float = id : "float"
+
+get = id : "get"
+
+ifFalse = id : "ifFalse"
+
+ifTrue = id : "ifTrue"
+
+input = id : "input"
+
+int = id : "int"
+
+print = id : "print"
+
+println = id : "println"
+
+set = id : "set"
+
+str = id : "str"
+
+true = id : "true"
+
+types = id : "types"
+
+var = id : "var"
+
+whileFalse = id : "whileFalse"
+
+whileTrue = id : "whileTrue"
+
+//Simbolos especiais
+":"
+"("
+")"
+"="
+":="
+","
+"&&"
+"||"
+"!"
+"!="
+"<"
+"<="
+">"
+">="
+"+"
+"-"
+"*"
+"/"
+
+//ignorar caracteres de formatação
+:[\t\n\s]
+
+:! {barra}{barra}[^\n]*
+
+:! {barraAsterisco}[^"*"/]*{asteriscoBarra}
+#NonTerminals
+<prog>
+<defTipos>
+<aux_tipo>
+<aux_tipo1>
+<doTipo>
+<simples>
+<composto>
+<listaCampos>
+<listaCampos1>
+<campo>
+<defConstantes>
+<aux_consts>
+<aux_consts1>
+<listaId>
+<listaId1>
+<valor>
+<decVariaveis>
+<aux_var>
+<aux_var1>
+<tipo>
+<listaComandos>
+<listaComandos1>
+<comando>
+<comando1>
+<comando2>
+<comando3>
+<comando4>
+<entradaDados>
+<saidaDados>
+<listaExpressoes>
+<listaExpressoes1>
+<expressao>
+<expressao1>
+<elemento>
+<relacional>
+<relacional1>
+<operador_relacional>
+<aritmetica>
+<aritmetica1>
+<termo>
+<termo1>
+<fator>
+<fator1>
+
+#Grammar
+<prog> ::= def <defTipos> <defConstantes> <decVariaveis> execute <listaComandos> ;
+<defTipos> ::= î | types <aux_tipo> ;
+<aux_tipo> ::= id ":" <doTipo> <aux_tipo1> ;
+<aux_tipo1> ::= î | <aux_tipo> ;
+<doTipo> ::= <simples> | <composto> ;
+<simples> ::= int | float | str | bool ;
+<composto> ::= "(" <listaCampos> ")" ;
+<listaCampos> ::= <campo> <listaCampos1>;
+<listaCampos1> ::= î | <listaCampos> ;
+<campo> ::= id ":" <simples> ;
+<defConstantes> ::= î | consts <aux_consts> ;
+<aux_consts> ::= <listaId> "=" <valor> <aux_consts1> ;
+<aux_consts1> ::= î | <aux_consts> ;
+<listaId> ::= id <listaId1> ;
+<listaId1> ::= î | "," <listaId> ;
+<valor> ::= ctsInt | ctsReal | ctsCaractere | true | false ;
+<decVariaveis> ::= î | var <aux_var> ;
+<aux_var> ::= <listaId> ":" <tipo> <aux_var1> ;
+<aux_var1> ::= î | <aux_var> ;
+<tipo> ::= int | float | str | bool | id ;
+<listaComandos> ::= <comando> <listaComandos1> ;
+<listaComandos1> ::= î | <listaComandos> ;
+<comando> ::= id <comando1> | <entradaDados> | <saidaDados> 
+             | "(" <expressao> ")" <comando2> ;
+<comando1> ::= ":=" <expressao> | set "(" id "," <expressao> ")" ;
+<comando2> ::= ifTrue ":" <listaComandos> <comando4>  
+              | whileTrue ":" <listaComandos> end
+	     | <comando3> ;
+<comando3> ::= ifFalse ":" <listaComandos> end 
+              | whileFalse ":" <listaComandos> end ;
+<comando4> ::= end | ifFalse ":" <listaComandos> end ;
+<entradaDados> ::= input "(" <listaId> ")" ;
+<saidaDados> ::= print "(" <listaExpressoes> ")" | println "(" <listaExpressoes> ")" ;
+<listaExpressoes> ::= <expressao> <listaExpressoes1> ;
+<listaExpressoes1> ::= î | "," <listaExpressoes> ;
+<expressao> ::= <elemento> <expressao1> ;
+<expressao1> ::= î |  "&&" <elemento> <expressao1> | "||" <elemento> <expressao1> ;
+<elemento> ::= <relacional> | true | false | "!" <elemento> ;
+<relacional> ::= <aritmetica> <relacional1> ;
+<relacional1> ::= î | <operador_relacional> <aritmetica> ;
+<operador_relacional> ::= "=" | "!=" | "<" | "<=" | ">" | ">=" ;
+<aritmetica> ::= <termo> <aritmetica1>;
+<aritmetica1> ::= î |  "+" <termo> <aritmetica1> | "-" <termo> <aritmetica1> ;
+<termo> ::= <fator> <termo1> ;
+<termo1> ::= î | "*" <fator> <termo1> | "/" <fator> <termo1> ;
+<fator> ::= id <fator1> | ctsInt | ctsReal | ctsCaractere | "(" <expressao> ")" | "+" <fator> | "-" <fator> ;
+<fator1> ::= î | get "(" id ")" ;
