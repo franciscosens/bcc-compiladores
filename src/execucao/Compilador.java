@@ -1,8 +1,12 @@
 package execucao;
 
-import analisadorLexico.LexicalError;
-import analisadorLexico.Lexico;
-import analisadorLexico.Token;
+import gerado.LexicalError;
+import gerado.Lexico;
+import gerado.SemanticError;
+import gerado.Semantico;
+import gerado.Sintatico;
+import gerado.SyntaticError;
+import gerado.Token;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,44 +17,16 @@ import java.util.Map;
  */
 public class Compilador {
 
-    private static Map<Integer, String> classes;
-
-    static {
-        classes = new HashMap<>();
-        classes.put(2, "identificador");
-        classes.put(3, "constante inteira");
-        classes.put(4, "constante real");
-        classes.put(5, "constante caractere");
-        for (int i = 6; i <= 26; i++) {
-            classes.put(i, "palavra reservada");
-        }
-        for (int i = 27; i <= 44; i++) {
-            classes.put(i, "símbolo especial");
-        }
-    }
-
     public String compilar(String texto) {
         Lexico lexico = new Lexico(texto);
-        StringBuilder sb = new StringBuilder();
+        Sintatico sintatico = new Sintatico();
+        Semantico semantico = new Semantico();
         try {
-            Token token;
-
-            sb.append("linha\t\tclasse\t\t\tlexema\n");
-            while ((token = lexico.nextToken()) != null) {
-                sb.append(lexico.retornarLinha(lexico.getStart())).append("\t\t")
-                        .append(getClasse(token.getId())).append("\t\t\t")
-                        .append(token.getLexeme()).append("\n");
-            }
-            sb.append("programa compilado com sucesso");
-        } catch (LexicalError e) {
+            sintatico.parse(lexico, semantico);
+            return "programa compilado com sucesso";
+        } catch (LexicalError | SyntaticError | SemanticError e) {
             return e.getMessage();
         }
-
-        return sb.toString();
-    }
-
-    public String getClasse(int lexema) {
-        return classes.get(lexema);
     }
 
 }
