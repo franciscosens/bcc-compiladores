@@ -1,9 +1,9 @@
-package analisadorLexico;
+package gerado;
 
-public interface Constants extends ScannerConstants
-{
-    int EPSILON  = 0;
-    int DOLLAR   = 1;
+public interface Constants extends ScannerConstants, ParserConstants {
+
+    int EPSILON = 0;
+    int DOLLAR = 1;
 
     int t_id = 2;
     int t_ctsInt = 3;

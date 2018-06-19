@@ -1,4 +1,4 @@
-package analisadorLexico;
+package gerado;
 
 public class Lexico implements Constants {
 
@@ -17,6 +17,10 @@ public class Lexico implements Constants {
     public void setInput(String input) {
         this.input = input;
         setPosition(0);
+    }
+
+    public String getInput() {
+        return input;
     }
 
     public void setPosition(int pos) {
