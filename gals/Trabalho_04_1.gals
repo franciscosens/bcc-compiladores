@@ -145,7 +145,7 @@ whileTrue = id : "whileTrue"
 <fator1>
 
 #Grammar
-<prog> ::= def <defTipos> <defConstantes> <decVariaveis> execute <listaComandos> ;
+<prog> ::= #15 def <defTipos> <defConstantes> <decVariaveis> execute <listaComandos> #16 ;
 <defTipos> ::= î | types <aux_tipo> ;
 <aux_tipo> ::= id ":" <doTipo> <aux_tipo1> ;
 <aux_tipo1> ::= î | <aux_tipo> ;
@@ -177,18 +177,18 @@ whileTrue = id : "whileTrue"
               | whileFalse ":" <listaComandos> end ;
 <comando4> ::= end | ifFalse ":" <listaComandos> end ;
 <entradaDados> ::= input "(" <listaId> ")" ;
-<saidaDados> ::= print "(" <listaExpressoes> ")" | println "(" <listaExpressoes> ")" ;
-<listaExpressoes> ::= <expressao> <listaExpressoes1> ;
+<saidaDados> ::= print "(" <listaExpressoes> ")" | println "(" <listaExpressoes> ")" #17 ;
+<listaExpressoes> ::= <expressao> #14 <listaExpressoes1> ;
 <listaExpressoes1> ::= î | "," <listaExpressoes> ;
 <expressao> ::= <elemento> <expressao1> ;
-<expressao1> ::= î |  "&&" <elemento> <expressao1> | "||" <elemento> <expressao1> ;
-<elemento> ::= <relacional> | true | false | "!" <elemento> ;
+<expressao1> ::= î |  "&&" <elemento> #18 <expressao1> | "||" <elemento> #19 <expressao1> ;
+<elemento> ::= <relacional> | true #11 | false #12 | "!" <elemento> #13 ;
 <relacional> ::= <aritmetica> <relacional1> ;
-<relacional1> ::= î | <operador_relacional> <aritmetica> ;
+<relacional1> ::= î | <operador_relacional> #9 <aritmetica> #10 ;
 <operador_relacional> ::= "=" | "!=" | "<" | "<=" | ">" | ">=" ;
 <aritmetica> ::= <termo> <aritmetica1>;
-<aritmetica1> ::= î |  "+" <termo> <aritmetica1> | "-" <termo> <aritmetica1> ;
+<aritmetica1> ::= î |  "+" <termo> #1 <aritmetica1> | "-" <termo> #2 <aritmetica1> ;
 <termo> ::= <fator> <termo1> ;
-<termo1> ::= î | "*" <fator> <termo1> | "/" <fator> <termo1> ;
-<fator> ::= id <fator1> | ctsInt | ctsReal | ctsCaractere | "(" <expressao> ")" | "+" <fator> | "-" <fator> ;
+<termo1> ::= î | "*" <fator> #3 <termo1> | "/" <fator> #4 <termo1> ;
+<fator> ::= id <fator1> | ctsInt #5 | ctsReal #6 | ctsCaractere #20 | "(" <expressao> ")" | "+" <fator> #7 | "-" <fator> #8 ;
 <fator1> ::= î | get "(" id ")" ;
