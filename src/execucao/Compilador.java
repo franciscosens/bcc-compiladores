@@ -6,9 +6,6 @@ import gerado.SemanticError;
 import gerado.Semantico;
 import gerado.Sintatico;
 import gerado.SyntaticError;
-import gerado.Token;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Francisco Lucas Sens
@@ -17,13 +14,15 @@ import java.util.Map;
  */
 public class Compilador {
 
+    public static String STATUS_COMPILACAO = "programa compilado com sucesso";
+
     public String compilar(String texto) {
         Lexico lexico = new Lexico(texto);
         Sintatico sintatico = new Sintatico();
         Semantico semantico = new Semantico();
         try {
             sintatico.parse(lexico, semantico);
-            return "programa compilado com sucesso";
+            return STATUS_COMPILACAO;
         } catch (LexicalError | SyntaticError | SemanticError e) {
             return e.getMessage();
         }

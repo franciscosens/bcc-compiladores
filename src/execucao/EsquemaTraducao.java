@@ -1,6 +1,7 @@
 package execucao;
 
 import gerado.SemanticError;
+import gerado.Token;
 import java.util.Stack;
 
 /**
@@ -8,11 +9,27 @@ import java.util.Stack;
  */
 public class EsquemaTraducao {
 
-    private Stack<String> pilhaTipos = new Stack<>();
-    private StringBuilder codigo = new StringBuilder();
-    private String operador = "";
+    private static final Stack<String> pilhaTipos = new Stack<>();
+    private static StringBuilder codigo = new StringBuilder();
+    private static String operador = "";
+    private static Token token;
+    private static final String FLOAT64 = "float64", INT64 = "int64", BOOLEAN = "bool";
 
-    public void gerar(int acao) throws SemanticError {
+    public EsquemaTraducao() {
+    }
+
+    public String obterCodigo() {
+        return codigo.toString();
+    }
+
+    public void limparTudo() {
+        pilhaTipos.clear();
+        codigo = new StringBuilder();
+        operador = "";
+    }
+
+    public static void gerar(int acao, Token token) throws SemanticError {
+        EsquemaTraducao.token = token;
         switch (acao) {
             case 1:
                 acao01();
@@ -77,43 +94,43 @@ public class EsquemaTraducao {
         }
     }
 
-    public void acao01() {
+    private static void acao01() {
         String tipo1 = pilhaTipos.pop();
         String tipo2 = pilhaTipos.pop();
         // TODO validar string e bool
-        if (tipo1.equals("float64") || tipo2.equals("float64")) {
-            pilhaTipos.push("float64");
+        if (tipo1.equals(FLOAT64) || tipo2.equals(FLOAT64)) {
+            pilhaTipos.push(FLOAT64);
         } else {
-            pilhaTipos.push("int64");
+            pilhaTipos.push(INT64);
         }
-        codigo.append("add\n");
+        codigo.append("\t\tadd\n");
     }
 
-    public void acao02() {
+    private static void acao02() {
         String tipo1 = pilhaTipos.pop();
         String tipo2 = pilhaTipos.pop();
         // TODO validar string e bool
-        if (tipo1.equals("float64") || tipo2.equals("float64")) {
-            pilhaTipos.push("float64");
+        if (tipo1.equals(FLOAT64) || tipo2.equals(FLOAT64)) {
+            pilhaTipos.push(FLOAT64);
         } else {
-            pilhaTipos.push("int64");
+            pilhaTipos.push(INT64);
         }
-        codigo.append("add\n");
+        codigo.append("\t\tsub\n");
     }
 
-    public void acao03() {
+    private static void acao03() {
         String tipo1 = pilhaTipos.pop();
         String tipo2 = pilhaTipos.pop();
         // TODO validar string e bool
-        if (tipo1.equals("float64") || tipo2.equals("float64")) {
-            pilhaTipos.push("float64");
+        if (tipo1.equals(FLOAT64) || tipo2.equals(FLOAT64)) {
+            pilhaTipos.push(FLOAT64);
         } else {
-            pilhaTipos.push("int64");
+            pilhaTipos.push(INT64);
         }
-        codigo.append("mul\n");
+        codigo.append("\t\tmul\n");
     }
 
-    public void acao04() throws SemanticError {
+    private static void acao04() throws SemanticError {
         String tipo1 = pilhaTipos.pop();
         String tipo2 = pilhaTipos.pop();
         // TODO validar string e bool
@@ -122,53 +139,53 @@ public class EsquemaTraducao {
         } else {
             throw new SemanticError("ERRO semântico, parar");
         }
-        codigo.append("div\n");
+        codigo.append("\t\tdiv\n");
     }
 
-    public void acao05() {
-        pilhaTipos.push("int64");
-        //codigo.append("ldc.i8 ").append(token.getLexeme()).append("\n");
-        codigo.append("conv.r8\n");
+    private static void acao05() {
+        pilhaTipos.push(INT64);
+        codigo.append("\t\tldc.i8 ").append(token.getLexeme()).append("\n");
+        codigo.append("\t\tconv.r8\n");
     }
 
-    public void acao06() {
-        pilhaTipos.push("float64\n");
-        //  codigo.append("ldc.r8 ").append(token.getLexeme()).append("\n");
+    private static void acao06() {
+        pilhaTipos.push(FLOAT64);
+        codigo.append("\t\tldc.r8 ").append(token.getLexeme()).append("\n");
     }
 
-    public void acao07() throws SemanticError {
+    private static void acao07() throws SemanticError {
         String tipo = pilhaTipos.pop();
-        if (tipo.equals("float64") || tipo.equals("int64")) {
+        if (tipo.equals(FLOAT64) || tipo.equals(INT64)) {
             pilhaTipos.push(tipo);
         } else {
             throw new SemanticError("ERRO semântico, parar");
         }
     }
 
-    public void acao08() throws SemanticError {
+    private static void acao08() throws SemanticError {
         String tipo = pilhaTipos.pop();
-        if (tipo.equals("float64") || tipo.equals("int64")) {
+        if (tipo.equals(FLOAT64) || tipo.equals(INT64)) {
             pilhaTipos.push(tipo);
         } else {
             throw new SemanticError("ERRO semântico, parar");
         }
-        codigo.append("ldc.i8 -1\n");
-        codigo.append(tipo.equals("int64") ? "conv.r8\n" : "mul\n");
+        codigo.append("\t\tldc.i8 -1\n");
+        codigo.append("\t\t").append(tipo.equals(INT64) ? "conv.r8\n" : "mul\n");
     }
 
-    public void acao09() {
-        //    operador = token.getLexeme();
+    private static void acao09() {
+        operador = token.getLexeme();
     }
 
-    public void acao10() throws SemanticError {
+    private static void acao10() throws SemanticError {
         String tipo1 = pilhaTipos.pop();
         String tipo2 = pilhaTipos.pop();
         if (tipo1.equals(tipo2)) {
-            pilhaTipos.push("bool");
+            pilhaTipos.push(BOOLEAN);
         } else {
             throw new SemanticError("ERRO semântico, parar");
         }
-
+        codigo.append("\t\t");
         switch (operador) {
             case ">":
                 codigo.append("cgt\n");
@@ -182,53 +199,53 @@ public class EsquemaTraducao {
         }
     }
 
-    public void acao11() {
-        pilhaTipos.push("bool");
-        codigo.append("ldc.i4.1\n");
+    private static void acao11() {
+        pilhaTipos.push(BOOLEAN);
+        codigo.append("\t\tldc.i4.1\n");
     }
 
-    public void acao12() {
-        pilhaTipos.push("bool");
-        codigo.append("ldc.i4.0\n");
+    private static void acao12() {
+        pilhaTipos.push(BOOLEAN);
+        codigo.append("\t\tldc.i4.0\n");
     }
 
-    public void acao13() throws SemanticError {
+    private static void acao13() throws SemanticError {
         String tipo = pilhaTipos.pop();
-        if (tipo.equals("bool")) {
-            pilhaTipos.push("bool");
+        if (tipo.equals(BOOLEAN)) {
+            pilhaTipos.push(BOOLEAN);
         } else {
             throw new SemanticError("ERRO semântico, parar");
         }
-        pilhaTipos.push("ldc.i4.1");
-        codigo.append("xor\n");
+        codigo.append("\t\tldc.i4.1\n");
+        codigo.append("\t\txor\n");
     }
 
-    public void acao14() {
+    private static void acao14() {
         String tipo = pilhaTipos.pop();
-        if (tipo.equals("int64")) {
-            codigo.append("conv.i8\n");
+        if (tipo.equals(INT64)) {
+            codigo.append("\t\tconv.i8\n");
         }
-        codigo.append("call void [mscorlib]System.Console::Write(").append(tipo).append(")\n");
+        codigo.append("\t\tcall void [mscorlib]System.Console::Write(").append(tipo).append(")\n");
     }
 
-    public void acao15() {
-        codigo.append(".assembly extern mscorlib {}\n .assembly _codigo_objeto{}\n .module _codigo_objeto.exe\n .class public _UNICA{\n .method static public void _principal() {\n .entrypoint\n");
+    private static void acao15() {
+        codigo.append(".assembly extern mscorlib {}\n.assembly _codigo_objeto{}\n.module _codigo_objeto.exe\n.class public _UNICA{\n\t.method static public void _principal() {\n\t\t.entrypoint\n");
     }
 
-    public void acao16() {
-        codigo.append("ret\n}\n}\n");
+    private static void acao16() {
+        codigo.append("\t\tret\n\t}\n}\n");
     }
 
-    public void acao17() {
+    private static void acao17() {
     }
 
-    public void acao18() {
+    private static void acao18() {
     }
 
-    public void acao19() {
+    private static void acao19() {
     }
 
-    public void acao20() {
+    private static void acao20() {
     }
 
     // Código para gerar o método do Switch
@@ -241,7 +258,7 @@ public class EsquemaTraducao {
         }
         System.out.println("}\n}");
         for (int i = 0; i < 20; i++) {
-            System.out.println("public void acao" + (((i + 1) < 10) ? "0" : "") + (i + 1) + "(){");
+            System.out.println("private static void acao" + (((i + 1) < 10) ? "0" : "") + (i + 1) + "(){");
             System.out.println("}");
         }
     }

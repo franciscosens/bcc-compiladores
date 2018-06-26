@@ -1,4 +1,5 @@
 package gerado;
+import execucao.Utilitario;
 
 public class Lexico implements Constants {
 
@@ -52,13 +53,12 @@ public class Lexico implements Constants {
                 }
             }
         }
-
         if (endState < 0 || (endState != state && tokenForState(lastState) == -2)) {
-            /* TODO aqui foi alterado para poder resgatar o nÃºmero da linha e o caractere com erro */
+            /* TODO aqui foi alterado para poder resgatar o número da linha e o caractere com erro */
             if ((lastState == 19) || (lastState == 4) || (lastState == 0)) {
-                throw new LexicalError(retornarTextoErroLinha(start) + input.substring(start, position) + " " + SCANNER_ERROR[lastState], start);
+                throw new LexicalError(Utilitario.retornarTextoErroLinha(start, input) + input.substring(start, position) + " " + SCANNER_ERROR[lastState], start);
             }
-            throw new LexicalError(retornarTextoErroLinha(start) + SCANNER_ERROR[lastState], start);
+            throw new LexicalError(Utilitario.retornarTextoErroLinha(start, input) + SCANNER_ERROR[lastState], start);
         }
 
         position = end;
@@ -135,24 +135,4 @@ public class Lexico implements Constants {
         }
     }
 
-    private String retornarTextoErroLinha(int start) {
-        return "Erro na linha " + retornarLinha(start) + " - ";
-    }
-
-    public int getStart() {
-        return start;
-    }
-
-    public int retornarLinha(int inicio) {
-        String[] linhas = input.split("\n");
-        int auxiliar = 0;
-        for (int i = 0; i < linhas.length; auxiliar++, i++) {
-            String linha = linhas[i];
-            auxiliar += linha.length();
-            if (inicio <= auxiliar) {
-                return i + 1;
-            }
-        }
-        return -1;
-    }
 }

@@ -1,6 +1,7 @@
 package view;
 
 import execucao.Compilador;
+import execucao.EsquemaTraducao;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -36,6 +37,7 @@ public class MainJFrame extends javax.swing.JFrame {
     private final TransferHandler transferHandler;
     private String caminhoArquivo;
     private final FileNameExtensionFilter fileNameExtensionFilter;
+    private static EsquemaTraducao esquemaTraducao;
 
     public MainJFrame() {
         try {
@@ -53,6 +55,7 @@ public class MainJFrame extends javax.swing.JFrame {
         transferHandler = jTextAreaEditor.getTransferHandler();
         caminhoArquivo = "";
         fileNameExtensionFilter = new FileNameExtensionFilter("Documento de Texto (*.txt)", "txt");
+        esquemaTraducao = new EsquemaTraducao();
     }
 
     @SuppressWarnings("unchecked")
@@ -556,12 +559,30 @@ public class MainJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonMouseExited
 
     private void compilar(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compilar
-        jTextAreaOutput.setText(compilador.compilar(jTextAreaEditor.getText()));
+        esquemaTraducao.limparTudo();
+        String retorno = compilador.compilar(jTextAreaEditor.getText());
+        jTextAreaOutput.setText(retorno);
+        if (retorno.equals(Compilador.STATUS_COMPILACAO)) {
+            try {
+                File file = new File(caminhoArquivo.replace("txt", "il"));
+                FileWriter fileWriter = new FileWriter(file);
+                fileWriter.write(esquemaTraducao.obterCodigo());
+                fileWriter.flush();
+                fileWriter.close();
+            } catch (Exception e) {
+
+            }
+        }
+
     }//GEN-LAST:event_compilar
 
     private void novo(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_novo
         limparTudo();
     }//GEN-LAST:event_novo
+
+    public static EsquemaTraducao getEsquemaTraducao() {
+        return esquemaTraducao;
+    }
 
     private void limparTudo() {
         caminhoArquivo = "";
@@ -620,31 +641,26 @@ public class MainJFrame extends javax.swing.JFrame {
                     caminhoArquivo += ".txt";
                 }
                 File arquivo = new File(caminhoArquivo);
-                JOptionPane.showMessageDialog(null, arquivo.getAbsoluteFile());
                 try {
                     BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(arquivo));
                     bufferedWriter.write(jTextAreaEditor.getText());
                     bufferedWriter.close();
                     jLabelCaminhoArquivo.setText(caminhoArquivo);
+                    jTextAreaOutput.setText("Arquivo criado e salvo com sucesso");
                 } catch (IOException ex) {
                     JOptionPane.showInputDialog(null, "Não foi possível salvar o seu arquivo");
                 }
             }
-
-            //caminhoArquivo = 
-            jLabelCaminhoArquivo.setText(caminhoArquivo);
-            jTextAreaOutput.setText("");
             return;
         }
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(caminhoArquivo));
             bufferedWriter.write(jTextAreaEditor.getText());
             bufferedWriter.close();
+            jTextAreaOutput.setText("Alterado com sucesso");
         } catch (IOException ex) {
             JOptionPane.showInputDialog(null, "Não foi possível salvar o seu arquivo");
         }
-        jTextAreaOutput.setText("");
-
     }//GEN-LAST:event_salvar
 
     private void sobre(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sobre
