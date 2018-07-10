@@ -1,0 +1,105 @@
+--ação #13 - tipo incompatível em operação lógica unária
+def
+  var   msg: string
+
+execute		 
+  msg := "teste"
+  (not msg) ifTrue:
+  	print("não deve funcionar")
+end
+
+--ação #13 - sucesso
+def
+  var   msg: bool
+
+execute		 
+  msg := true
+  (not msg) ifFalse:
+  	print("deve funcionar")
+end
+
+
+--ação #10 - tipos incompatíveis em operação relacional
+def
+  var   valor01: float
+  		msg: string
+
+execute		 
+  valor01 := 1,8
+  msg := "teste"
+  (valor01 = msg) ifTrue:
+  	print("não deve funcionar")
+end
+
+--ação #10 - sucesso
+def
+  var   valor01, valor02: float
+
+execute		 
+  valor01 := 1,8
+  valor02 := 1,8
+  (valor01 = msg) ifTrue:
+  	print("deve funcionar")
+end
+
+--ação #1 - tipo incompatível em operação aritmética binária
+def
+  var    valor01: float
+         valor02, i: int
+
+execute		 
+  valor01 := 1,1
+  valor02 := 1
+  i := valor01 - valor02
+end
+
+--ação #1 - sucesso
+def
+  var    valor01, i, valor02: float
+
+execute		 
+  valor01 := 1,1
+  valor02 := 1
+  i := valor01 - valor02
+end
+
+--ação #2 - tipo incompatível em operação aritmética binária
+def
+  var    valor01: float
+         valor02, i: int
+
+execute		 
+  valor01 := 1,1
+  valor02 := 1
+  i := valor01 + valor02
+end
+
+--ação #2 - sucesso
+def
+  var    valor01, i, valor02: float
+
+execute		 
+  valor01 := 1,1
+  valor02 := 1
+  i := valor01 + valor02
+end
+
+
+
+
+
+--ação #7 - tipo incompatível em operação aritmética unária
+def
+  var    valor01: float
+
+execute		 
+  valor01 := "teste"
+end
+
+--ação #7 - sucesso
+def
+  var    valor01: float
+
+execute		 
+  valor01 := 1,1
+end
