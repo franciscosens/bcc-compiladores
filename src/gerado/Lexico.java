@@ -54,7 +54,7 @@ public class Lexico implements Constants {
             }
         }
         if (endState < 0 || (endState != state && tokenForState(lastState) == -2)) {
-            /* TODO aqui foi alterado para poder resgatar o número da linha e o caractere com erro */
+            /* TODO aqui foi alterado para poder resgatar o n?mero da linha e o caractere com erro */
             if ((lastState == 19) || (lastState == 4) || (lastState == 0)) {
                 throw new LexicalError(Utilitario.retornarTextoErroLinha(start, input) + input.substring(start, position) + " " + SCANNER_ERROR[lastState], start);
             }
@@ -134,5 +134,4 @@ public class Lexico implements Constants {
             return (char) -1;
         }
     }
-
 }

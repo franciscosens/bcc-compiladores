@@ -551,6 +551,7 @@ public class MainJFrame extends javax.swing.JFrame {
         JButton jButton = (JButton) evt.getComponent();
         jButton.setBackground(Color.decode("#A9B7C6"));
         jButton.setOpaque(true);
+
     }//GEN-LAST:event_jButtonMouseEntered
 
     private void jButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonMouseExited
@@ -595,6 +596,8 @@ public class MainJFrame extends javax.swing.JFrame {
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setFileFilter(fileNameExtensionFilter);
         jFileChooser.setAcceptAllFileFilterUsed(false);
+
+        jFileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + File.separator + "Desktop"));
         int open = jFileChooser.showOpenDialog(this);
         switch (open) {
             case APPROVE_OPTION:

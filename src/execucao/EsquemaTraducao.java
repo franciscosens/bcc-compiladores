@@ -2,6 +2,9 @@ package execucao;
 
 import gerado.SemanticError;
 import gerado.Token;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -14,6 +17,13 @@ public class EsquemaTraducao {
     private static String operador = "";
     private static Token token;
     private static final String FLOAT64 = "float64", INT64 = "int64", BOOLEAN = "bool";
+    private static String tipoVariavel = "";
+    private static Hashtable<String, String> ts = new Hashtable<>();
+    private static ArrayList<String> listaId = new ArrayList<>();
+    private static Stack<String> pilhaRotulosRepeticao = new Stack<>();
+    private static Stack<String> pilhaRotulosSelecao = new Stack<>();
+    private static int contadorRepeticao = 0;
+    private static int contadorSelecao = 0;
 
     public EsquemaTraducao() {
     }
@@ -23,7 +33,13 @@ public class EsquemaTraducao {
     }
 
     public void limparTudo() {
+        contadorRepeticao = 0;
+        contadorSelecao = 0;
         pilhaTipos.clear();
+        pilhaRotulosRepeticao.clear();
+        pilhaRotulosSelecao.clear();
+        listaId.clear();
+        ts.clear();
         codigo = new StringBuilder();
         operador = "";
     }
@@ -91,6 +107,39 @@ public class EsquemaTraducao {
             case 20:
                 acao20();
                 break;
+            case 21:
+                acao21();
+                break;
+            case 22:
+                acao22();
+                break;
+            case 23:
+                acao23();
+                break;
+            case 24:
+                acao24();
+                break;
+            case 25:
+                acao25();
+                break;
+            case 26:
+                acao26();
+                break;
+            case 27:
+                acao27();
+                break;
+            case 28:
+                acao28();
+                break;
+            case 29:
+                acao29();
+                break;
+            case 30:
+                acao30();
+                break;
+            case 31:
+                acao31();
+                break;
         }
     }
 
@@ -150,7 +199,7 @@ public class EsquemaTraducao {
 
     private static void acao06() {
         pilhaTipos.push(FLOAT64);
-        codigo.append("\t\tldc.r8 ").append(token.getLexeme()).append("\n");
+        codigo.append("\t\tldc.r8 ").append(token.getLexeme().replace(",", ".")).append("\n");
     }
 
     private static void acao07() throws SemanticError {
@@ -158,7 +207,7 @@ public class EsquemaTraducao {
         if (tipo.equals(FLOAT64) || tipo.equals(INT64)) {
             pilhaTipos.push(tipo);
         } else {
-            throw new SemanticError("ERRO semântico, parar");
+            throw new SemanticError("tipo incompatível em operação aritmética unária");
         }
     }
 
@@ -167,10 +216,10 @@ public class EsquemaTraducao {
         if (tipo.equals(FLOAT64) || tipo.equals(INT64)) {
             pilhaTipos.push(tipo);
         } else {
-            throw new SemanticError("ERRO semântico, parar");
+            throw new SemanticError("tipo incompatível em operação aritmética unária");
         }
         codigo.append("\t\tldc.i8 -1\n");
-        codigo.append("\t\t").append(tipo.equals(INT64) ? "conv.r8\n" : "mul\n");
+        codigo.append("\t\t").append(tipo.equals(INT64) ? "\t\tconv.r8\n" : "").append("\t\tmul\n");
     }
 
     private static void acao09() {
@@ -182,8 +231,8 @@ public class EsquemaTraducao {
         String tipo2 = pilhaTipos.pop();
         if (tipo1.equals(tipo2)) {
             pilhaTipos.push(BOOLEAN);
-        } else {
-            throw new SemanticError("ERRO semântico, parar");
+        } else if (!((tipo1.equals(INT64) || tipo1.equals(FLOAT64)) && (tipo2.equals(INT64) || tipo2.equals(FLOAT64)))) {
+            throw new SemanticError("tipos incompatíveis em operação relacional");
         }
         codigo.append("\t\t");
         switch (operador) {
@@ -214,7 +263,7 @@ public class EsquemaTraducao {
         if (tipo.equals(BOOLEAN)) {
             pilhaTipos.push(BOOLEAN);
         } else {
-            throw new SemanticError("ERRO semântico, parar");
+            throw new SemanticError("tipo incompatível em operação lógica unária");
         }
         codigo.append("\t\tldc.i4.1\n");
         codigo.append("\t\txor\n");
@@ -224,12 +273,16 @@ public class EsquemaTraducao {
         String tipo = pilhaTipos.pop();
         if (tipo.equals(INT64)) {
             codigo.append("\t\tconv.i8\n");
+        } else if (tipo.equals(FLOAT64)) {
+            codigo.append("");
+        } else {
+            codigo.append("\t\tldstr ").append(token.getLexeme()).append("\n");
         }
         codigo.append("\t\tcall void [mscorlib]System.Console::Write(").append(tipo).append(")\n");
     }
 
     private static void acao15() {
-        codigo.append(".assembly extern mscorlib {}\n.assembly _codigo_objeto{}\n.module _codigo_objeto.exe\n.class public _UNICA{\n\t.method static public void _principal() {\n\t\t.entrypoint\n");
+        codigo.append(".assembly extern mscorlib {}\n.assembly _codigo_objeto{}\n.module _codigo_objeto.exe\n\n.class public _UNICA{\n\t.method static public void _principal() {\n\t\t.entrypoint\n");
     }
 
     private static void acao16() {
@@ -237,6 +290,16 @@ public class EsquemaTraducao {
     }
 
     private static void acao17() {
+        String tipo = pilhaTipos.pop();
+        if (tipo.equals(INT64)) {
+            codigo.append("\t\tconv.i8\n");
+        } else if (tipo.equals(FLOAT64)) {
+            codigo.append("");
+        } else {
+            codigo.append("\t\tldstr \"\\n\"\n");
+        }
+
+        codigo.append("\t\tcall void [mscorlib]System.Console::Write(").append(tipo).append(")\n");
     }
 
     private static void acao18() {
@@ -246,18 +309,140 @@ public class EsquemaTraducao {
     }
 
     private static void acao20() {
+        pilhaTipos.push("string");
+
+    }
+
+    private static void acao21() {
+        switch (token.getLexeme()) {
+            case "int":
+                tipoVariavel = INT64;
+                break;
+            case "float":
+                tipoVariavel = FLOAT64;
+                break;
+            case "str":
+                tipoVariavel = "string";
+                break;
+            case "bool":
+                tipoVariavel = "bool";
+                break;
+
+        }
+    }
+
+    private static void acao22() {
+        listaId.add(token.getLexeme());
+    }
+
+    private static void acao23() throws SemanticError {
+        for (String id : listaId) {
+            if (ts.containsKey(id)) {
+                throw new SemanticError("identificador já declarado");
+            }
+            ts.put(id, tipoVariavel);
+            codigo.append("\t\t.locals(").append(tipoVariavel).append(" ").append(id).append(")\n");
+        }
+        listaId.clear();
+    }
+
+    private static void acao24() throws SemanticError {
+        for (String id : listaId) {
+            if (!ts.containsKey(id)) {
+                throw new SemanticError("identificador não declarado");
+            }
+            String tipoId = ts.get(id);
+            String classe = "";
+            switch (tipoId) {
+                case INT64:
+                    classe = "Int64";
+                    break;
+                case FLOAT64:
+                    classe = "Double";
+                    break;
+            }
+            codigo.append("\t\tcall string [mscorlib]System.Console::ReadLine()\n");
+            codigo.append("\t\tcall ").append(tipoId).append(" [mscorlib]System.").append(classe).append("::Parse(string)\n");
+            codigo.append("\t\tstloc ").append(id).append("\n");
+        }
+        listaId.clear();
+    }
+
+    private static void acao25() throws SemanticError {
+        String id = token.getLexeme();
+        if (!ts.containsKey(id)) {
+            throw new SemanticError("identificador não declarado");
+        }
+        String tipoId = ts.get(id);
+        pilhaTipos.push(tipoId);
+        codigo.append("\t\tldloc ").append(id).append("\n");
+        if (tipoId.equals(INT64)) {
+            codigo.append("\t\tconv.r8\n");
+        }
+    }
+
+    private static void acao26() throws SemanticError {
+        String id = listaId.remove(0);
+        if (!ts.containsKey(id)) {
+            throw new SemanticError("identificador não declarado");
+        }
+        String tipoId = ts.get(id);
+        String tipoExp = pilhaTipos.pop();
+        if (!tipoId.equals(tipoExp)) {
+            throw new SemanticError("tipo incompatível em comando de atribuição");
+        }
+        if (tipoId.equals(FLOAT64)) {
+            codigo.append("\t\tconv.i8\n");
+        }
+        codigo.append("\t\tstloc ").append(id).append("\n");
+    }
+
+    private static void acao27() {
+        pilhaRotulosSelecao.add("selecao" + ++contadorSelecao);
+        codigo.append("\t\tselecao").append(contadorSelecao).append(":\n");
+
+    }
+
+    private static void acao28() {
+        if (token.getLexeme().equals("ifTrue")) {
+            codigo.append("\t\tbrfalse selecao").append(++contadorSelecao).append("\n");
+        }
+        if (token.getLexeme().equals("ifFalse")) {
+            codigo.append("\t\tbrtrue selecao").append(++contadorSelecao).append("\n");
+        }
+    }
+
+    private static void acao29() {
+        if (token.getLexeme().equals("ifTrue")) {
+            codigo.append("\t\tbrfalse selecao").append(++contadorSelecao).append("\n");
+        }
+        if (token.getLexeme().equals("ifFalse")) {
+            codigo.append("\t\tbrtrue selecao").append(++contadorSelecao).append("\n");
+        }
+    }
+
+    private static void acao30() {
+        if (token.getLexeme().equals("ifTrue")) {
+            codigo.append("\t\tbrfalse selecao").append(++contadorSelecao).append("\n");
+        }
+        if (token.getLexeme().equals("ifFalse")) {
+            codigo.append("\t\tbrtrue selecao").append(++contadorSelecao).append("\n");
+        }
+    }
+
+    private static void acao31() {
     }
 
     // Código para gerar o método do Switch
     public static void main(String[] args) {
         System.out.println("switch(acao){");
-        for (int i = 0; i < 20; i++) {
+        for (int i = 26; i < 32; i++) {
             System.out.println("case " + (i + 1) + ": ");
             System.out.println("acao" + (((i + 1) < 10) ? "0" : "") + (i + 1) + "();");
             System.out.println("break;");
         }
         System.out.println("}\n}");
-        for (int i = 0; i < 20; i++) {
+        for (int i = 26; i < 32; i++) {
             System.out.println("private static void acao" + (((i + 1) < 10) ? "0" : "") + (i + 1) + "(){");
             System.out.println("}");
         }
