@@ -20,10 +20,8 @@ public class EsquemaTraducao {
     private static String tipoVariavel = "";
     private static Hashtable<String, String> ts = new Hashtable<>();
     private static ArrayList<String> listaId = new ArrayList<>();
-    private static Stack<String> pilhaRotulosRepeticao = new Stack<>();
-    private static Stack<String> pilhaRotulosSelecao = new Stack<>();
-    private static int contadorRepeticao = 0;
-    private static int contadorSelecao = 0;
+    private static Stack<String> pilhaRotulos = new Stack<>();
+    private static int contadorRotulo = 0;
 
     public EsquemaTraducao() {
     }
@@ -33,11 +31,9 @@ public class EsquemaTraducao {
     }
 
     public void limparTudo() {
-        contadorRepeticao = 0;
-        contadorSelecao = 0;
+        contadorRotulo = 0;
         pilhaTipos.clear();
-        pilhaRotulosRepeticao.clear();
-        pilhaRotulosSelecao.clear();
+        pilhaRotulos.clear();
         listaId.clear();
         ts.clear();
         codigo = new StringBuilder();
@@ -303,9 +299,11 @@ public class EsquemaTraducao {
     }
 
     private static void acao18() {
+        codigo.append("\t\tand\n");
     }
 
     private static void acao19() {
+        codigo.append("\t\tor\n");
     }
 
     private static void acao20() {
@@ -398,53 +396,47 @@ public class EsquemaTraducao {
     }
 
     private static void acao27() {
-        pilhaRotulosSelecao.add("selecao" + ++contadorSelecao);
-        codigo.append("\t\tselecao").append(contadorSelecao).append(":\n");
+        pilhaRotulos.add("label" + ++contadorRotulo);
+        codigo.append("\t\tlabel").append(contadorRotulo).append(":\n");
 
     }
 
     private static void acao28() {
+
         if (token.getLexeme().equals("ifTrue")) {
-            codigo.append("\t\tbrfalse selecao").append(++contadorSelecao).append("\n");
+            pilhaRotulos.add("label" + ++contadorRotulo);
+            codigo.append("\t\tbrfalse label").append(contadorRotulo).append("\n");
         }
         if (token.getLexeme().equals("ifFalse")) {
-            codigo.append("\t\tbrtrue selecao").append(++contadorSelecao).append("\n");
+            pilhaRotulos.add("label" + ++contadorRotulo);
+            codigo.append("\t\tbrtrue label").append(contadorRotulo).append("\n");
+        } else if (token.getLexeme().equals("whileTrue")) {
+            pilhaRotulos.add("label" + ++contadorRotulo);
+            codigo.append("\t\tbrfalse label").append(contadorRotulo).append("\n");
+        } else if (token.getLexeme().equals("whileFalse")) {
+            pilhaRotulos.add("label" + ++contadorRotulo);
+            codigo.append("\t\tbrtrue label").append(contadorRotulo).append("\n");
         }
     }
 
     private static void acao29() {
-        if (token.getLexeme().equals("ifTrue")) {
-            codigo.append("\t\tbrfalse selecao").append(++contadorSelecao).append("\n");
-        }
-        if (token.getLexeme().equals("ifFalse")) {
-            codigo.append("\t\tbrtrue selecao").append(++contadorSelecao).append("\n");
-        }
+        codigo.append("\t\t").append(pilhaRotulos.pop()).append(":\n");
     }
 
     private static void acao30() {
-        if (token.getLexeme().equals("ifTrue")) {
-            codigo.append("\t\tbrfalse selecao").append(++contadorSelecao).append("\n");
-        }
-        if (token.getLexeme().equals("ifFalse")) {
-            codigo.append("\t\tbrtrue selecao").append(++contadorSelecao).append("\n");
-        }
+        String texto = "label" + ++contadorRotulo;
+        gerar(texto, pilhaRotulos.pop());
+        pilhaRotulos.add(texto);
+    }
+
+    private static void gerar(String auxiliar01, String auxiliar02) {
+        codigo.append("\t\tbr ").append(auxiliar01).append("\n");
+        codigo.append("\t\t").append(auxiliar02).append(":\n");
     }
 
     private static void acao31() {
+        String ultimo = pilhaRotulos.pop();
+        gerar(pilhaRotulos.pop(), ultimo);
     }
 
-    // Código para gerar o método do Switch
-    public static void main(String[] args) {
-        System.out.println("switch(acao){");
-        for (int i = 26; i < 32; i++) {
-            System.out.println("case " + (i + 1) + ": ");
-            System.out.println("acao" + (((i + 1) < 10) ? "0" : "") + (i + 1) + "();");
-            System.out.println("break;");
-        }
-        System.out.println("}\n}");
-        for (int i = 26; i < 32; i++) {
-            System.out.println("private static void acao" + (((i + 1) < 10) ? "0" : "") + (i + 1) + "(){");
-            System.out.println("}");
-        }
-    }
 }
