@@ -1,0 +1,43 @@
+--ação #19 - tipos incompativeis em operação lógica binária
+def
+  var   msg: bool
+  		msg01: float
+execute		 
+	msg := true
+	msg01 := 1,9
+	(msg || msg01) ifFalse:
+		print("não deve funcionar")
+end
+
+--ação #19 - sucesso
+def
+  var   msg, msg01: bool
+
+execute		 
+	msg := true
+	msg01 := true
+	(msg || msg01) ifTrue:
+		print("deve funcionar")
+end
+
+--identificador não declarado
+def
+execute		 
+	msg := "não declarado"
+end
+
+--identificador já declarado
+def
+def
+  var   msg, msg: string
+execute		 
+	msg := "não declarado"
+end
+
+--tipo incompativel com comando de atribuição
+def
+def
+  var   valor: int
+execute		 
+	valor := "não declarado"
+end

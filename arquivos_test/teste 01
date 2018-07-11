@@ -83,23 +83,3 @@ execute
   valor02 := 1
   i := valor01 + valor02
 end
-
-
-
-
-
---ação #7 - tipo incompatível em operação aritmética unária
-def
-  var    valor01: float
-
-execute		 
-  valor01 := "teste"
-end
-
---ação #7 - sucesso
-def
-  var    valor01: float
-
-execute		 
-  valor01 := 1,1
-end
